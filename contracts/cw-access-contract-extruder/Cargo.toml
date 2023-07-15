@@ -1,0 +1,75 @@
+[package]
+name = "cw-access-contract-extruder"
+description = "CosmWasm smart contract that adds invariants to Instantiate2 in a generic manner"
+license = "MIT OR Apache-2.0"
+authors = ["Mike Purvis @mikedotexe"]
+version = "0.1.0"
+edition = "2021"
+readme = "README.md"
+repository = "https://github.com/mikedotexe/cw-i2-accounts"
+keywords = ["cosmwasm", "smart-contracts", "interchain", "blockchain"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+# This does not bloat contract size, it's only for creating the JSON schema
+[[bin]]
+name = "make-schema"
+path = "schema-maker/schema.rs"
+
+[dependencies]
+cosmwasm-std = { version = "1.2.5", features = ["stargate", "cosmwasm_1_2"] }
+cosmwasm-schema = "1.2.5"
+cw2 = "1.0.1"
+schemars = "0.8.11"
+serde_json = "1.0.96"
+cw-storage-plus = "1.0.1"
+thiserror = { version = "1.0.37" }
+# Our package here
+#cw-i2-creator-pkg = { version = "0.1.1-rc.1" }
+cw-access-contract-extruder-pkg = { path = "../../packages/cw-access-contract-extruder-pkg" }
+sha2 = "0.10.6"
+
+[dev-dependencies]
+cw-multi-test = "0.16.4"
+cosmwasm-vm = { version = "1.2.5", default-features = false, features = ["iterator"] }
+cosmwasm-std = { version = "1.2.5", features = ["stargate", "cosmwasm_1_2"] }
+cosmwasm-crypto = "1.2.5"
+
+# Make sure you've run: "cargo install cargo-run-script"
+# Then you can run the scripts below, like: "cargo run-script optimize"
+[package.metadata.scripts]
+optimize = """ME=$(basename "$(dirname "$PWD")")/$(basename "$PWD") && cd ../.. && docker run --rm -v "$(pwd)":/code \
+  --mount type=volume,source="$(basename "$(pwd)")_cache",target=/code/target \
+  --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
+  cosmwasm/rust-optimizer:0.12.13 ./$ME"""
+optimize-m1 = """docker run --rm -v "$(pwd)":/code \
+  --mount type=volume,source="$(basename "$(pwd)")_cache",target=/code/target \
+  --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
+  cosmwasm/rust-optimizer-arm64:0.12.13
+"""
+schema = "cargo +nightly run --bin make-schema"
+unit-test = "cargo +nightly test --lib"
+# This is a fast way to run "cargo check" ignoring (most) warnings
+check-no-warnings = """RUSTFLAGS="-A warnings" cargo check"""
+test-no-warnings = """RUSTFLAGS="-A warnings" cargo test -- --nocapture"""
+
+[features]
+# Add feature "cranelift" to default if you need 32 bit or ARM support
+default = []
+# Use cranelift backend instead of singlepass. This is required for development on 32 bit or ARM machines.
+cranelift = ["cosmwasm-vm/cranelift"]
+# for quicker tests, cargo test --lib
+# for more explicit tests, cargo test --features=backtraces
+backtraces = ["cosmwasm-std/backtraces", "cosmwasm-vm/backtraces"]
+
+[profile.release]
+opt-level = 3
+debug = false
+rpath = false
+lto = true
+debug-assertions = false
+codegen-units = 1
+panic = 'abort'
+incremental = false
+overflow-checks = true

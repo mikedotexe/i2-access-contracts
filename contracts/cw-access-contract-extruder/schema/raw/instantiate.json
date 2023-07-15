@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "InstantiateMsg",
+  "description": "The instantiate message with no params We will only allow one contract to be instantiated",
+  "type": "object",
+  "additionalProperties": false
+}
