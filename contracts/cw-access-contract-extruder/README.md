@@ -33,4 +33,8 @@ JSON:
 
     junod tx wasm execute juno1dc7ztf3jxsgatpku2mka66mkhfela8vfpexk8nthg9ajsgrj6hjqmz2s0z '{"create":{"code_id":"2873","target_contract":"juno1mcgq05alsz5q2746n0xej09urylf2cqvgyg40meauz9h4hf9m74sq03ynd","allowed_methods":["toggle"],"delta":0}}' --from mikereg -y
 
-## 
+## See it working
+
+Sent from approved account
+
+    junod tx wasm execute juno1mcgq05alsz5q2746n0xej09urylf2cqvgyg40meauz9h4hf9m74sq03ynd '{"exec":{"cosmos_msg":{"wasm":{"execute":{"contract_addr":"juno1rpaj83s6k9yaxetmzra4qcgr9xazelqvugy8wzdymeswppq0nlgsr0jx29","funds":[],"msg":"eyJ0b2dnbGUiOnt9fQ=="}}}}}' --from mikereg -y
