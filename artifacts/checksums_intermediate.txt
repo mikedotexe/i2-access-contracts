@@ -1,0 +1,1 @@
+191fe7df9e4f3e9bd258cb0ae2f8744b6d6de6bf32537e770646eb890771b542  ./contracts/cw-access-contract-extruder/target/wasm32-unknown-unknown/release/cw_access_contract_extruder.wasm
