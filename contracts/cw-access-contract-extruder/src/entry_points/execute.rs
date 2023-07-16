@@ -16,12 +16,7 @@ pub fn execute(
 ) -> Result<Response, ContractError> {
     match msg {
         ExecuteMsg::Create {
-            code_id
-        } => create::execute(
-            env,
-            deps,
-            info,
-            code_id
-        ),
+            code_id, target_contract, allowed_methods, delta
+        } => create::execute(env, deps, info, code_id, target_contract, allowed_methods, delta),
     }
 }

@@ -446,6 +446,7 @@ dependencies = [
  "cosmwasm-std",
  "cosmwasm-vm",
  "cw-access-contract-extruder-pkg",
+ "cw-access-contract-pkg",
  "cw-multi-test",
  "cw-storage-plus",
  "cw2",
@@ -457,6 +458,15 @@ dependencies = [
 
 [[package]]
 name = "cw-access-contract-extruder-pkg"
+version = "0.1.0"
+dependencies = [
+ "cosmwasm-schema",
+ "cosmwasm-std",
+ "cw-storage-plus",
+]
+
+[[package]]
+name = "cw-access-contract-pkg"
 version = "0.1.0"
 dependencies = [
  "cosmwasm-schema",

@@ -25,10 +25,10 @@ schemars = "0.8.11"
 serde_json = "1.0.96"
 cw-storage-plus = "1.0.1"
 thiserror = { version = "1.0.37" }
-# Our package here
-#cw-i2-creator-pkg = { version = "0.1.1-rc.1" }
-cw-access-contract-extruder-pkg = { path = "../../packages/cw-access-contract-extruder-pkg" }
 sha2 = "0.10.6"
+# Our package here
+cw-access-contract-extruder-pkg = { path = "../../packages/cw-access-contract-extruder-pkg" }
+cw-access-contract-pkg = { path = "../../packages/cw-access-contract-pkg"}
 
 [dev-dependencies]
 cw-multi-test = "0.16.4"

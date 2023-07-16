@@ -18,4 +18,7 @@ pub enum ContractError {
 
     #[error("{0}")]
     SerdeError(#[from] serde_json::Error),
+
+    #[error("Sender is not authorized")]
+    Unauthorized,
 }

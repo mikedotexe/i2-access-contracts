@@ -2,7 +2,8 @@
 
 use cosmwasm_schema::cw_serde;
 use crate::errors::ContractError;
-use cosmwasm_std::{Addr, Binary, DepsMut, Env, MessageInfo, Response, to_binary, WasmMsg};
+use cosmwasm_std::{Addr, Binary, DepsMut, Env, MessageInfo, Response, to_binary, Uint64, WasmMsg};
+use cw_access_contract_pkg::types::SaltItems;
 use sha2::{Sha512, Digest};
 use crate::state::CONFIG;
 
@@ -13,15 +14,18 @@ pub fn execute(
     _env: Env,
     deps: DepsMut,
     info: MessageInfo,
+    code_id: Uint64,
     target_contract: String,
     mut allowed_methods: Vec<String>,
     delta: u32, // More than enough
 ) -> Result<Response, ContractError> {
+    let code_id = code_id.u64();
+
     // For determinism's sake, we sort the methods
     allowed_methods.sort();
     let salt_items = SaltItems {
-        target_contract,
-        allowed_methods,
+        target_contract: target_contract.clone(),
+        allowed_methods: allowed_methods.clone(),
         delta,
     };
     let salt_string = serde_json::to_vec(&salt_items)?;
@@ -38,11 +42,10 @@ pub fn execute(
     let config = CONFIG.load(deps.storage)?;
     // This was saved during instantiate from info.sender
     let owner = Addr::unchecked(config.owner);
-    let code_id = config.base_contract_code_id;
 
     // Access control, so only owner can proceed
     if info.sender != owner {
-        return Err(ContractError::Unauthorized { owner });
+        return Err(ContractError::Unauthorized);
     }
 
     // Create Instantiate2 message to send with response
@@ -50,7 +53,15 @@ pub fn execute(
         admin: Some(info.sender.to_string()),
         code_id,
         label: "Clever Instantiate2".to_string(),
-        msg: to_binary(&cw_i2_base_pkg::msgs::instantiate_msg::InstantiateMsg { allowed_callers: vec![], croncat_factory_address: "".to_string() })?,
+        msg: to_binary(&cw_access_contract_pkg::msgs::instantiate_msg::InstantiateMsg {
+            birth_salt: SaltItems {
+                target_contract,
+                allowed_methods,
+                delta,
+            },
+            croncat_factory_address: None,
+            allowed_callers: None,
+        })?,
         funds: info.funds,
         salt: salt.into(),
     };
